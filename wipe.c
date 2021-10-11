@@ -114,8 +114,9 @@ void print_error_verbose(int verbose, int print_errno, char *message) {
 void *generate_buffer(int size_in_bytes, unsigned char value) {
     void *buffer;
 
-    /* Buffer must be aligned for direct I/O. */
-    if (posix_memalign(&buffer, size_in_bytes, size_in_bytes)) {
+    buffer = malloc(size_in_bytes);
+
+    if (buffer == NULL) {
         return NULL;
     }
 
@@ -134,8 +135,9 @@ void *generate_random_buffer(int size_in_bytes) {
         return NULL; 
     }
 
-    /* Buffer must be aligned for direct I/O. */
-    if (posix_memalign(&buffer, size_in_bytes, size_in_bytes)) {
+    buffer = malloc(size_in_bytes);
+
+    if (buffer == NULL) {
         return NULL;
     }
 
@@ -263,8 +265,6 @@ int main(int argc, char **argv) {
         return -1;
     } 
 
-    printf("Unmount the device to force sync.\n");
-
     if (args.unlink) {
         print_verbose(args.verbose, "Unlinking file\n");
         if (unlink(file_path) < 0) {
@@ -272,6 +272,8 @@ int main(int argc, char **argv) {
             return -1;
         }
     }
+
+    printf("Unmount the device to force sync.\n");
 
     return 0;
 }
